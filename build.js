@@ -13,9 +13,13 @@ const JASOOS_DIR = path.join(ROOT, 'jasoos');
 const SRC_DIR = path.join(JASOOS_DIR, 'src');
 const ASSETS_DIR = path.join(JASOOS_DIR, 'assets');
 const OUTPUTS_DIR = path.join(ROOT, 'outputs');
+const PUBLIC_DIR = path.join(ROOT, 'public');
 
 if (!fs.existsSync(OUTPUTS_DIR)) {
   fs.mkdirSync(OUTPUTS_DIR, { recursive: true });
+}
+if (!fs.existsSync(PUBLIC_DIR)) {
+  fs.mkdirSync(PUBLIC_DIR, { recursive: true });
 }
 
 console.log('📦 Building JASOOS...');
@@ -69,21 +73,26 @@ try {
 // Write outputs
 const targetOutputsHtml = path.join(OUTPUTS_DIR, 'jasoos.html');
 const targetOutputsIndex = path.join(OUTPUTS_DIR, 'index.html');
+const targetPublicIndex = path.join(PUBLIC_DIR, 'index.html');
+const targetPublicHtml = path.join(PUBLIC_DIR, 'jasoos.html');
 const targetRootIndex = path.join(ROOT, 'index.html');
 
 fs.writeFileSync(targetOutputsHtml, html, 'utf-8');
 fs.writeFileSync(targetOutputsIndex, html, 'utf-8');
+fs.writeFileSync(targetPublicIndex, html, 'utf-8');
+fs.writeFileSync(targetPublicHtml, html, 'utf-8');
 fs.writeFileSync(targetRootIndex, html, 'utf-8');
 
 const sizeKb = (Buffer.byteLength(html, 'utf-8') / 1024).toFixed(1);
 console.log(`✅ Built bundle: ${sizeKb} KB`);
 
-// Copy assets to outputs/ and root
+// Copy assets to outputs/, public/, and root
 if (fs.existsSync(ASSETS_DIR)) {
   const assetFiles = fs.readdirSync(ASSETS_DIR).filter(f => fs.statSync(path.join(ASSETS_DIR, f)).isFile());
   for (const file of assetFiles) {
     const srcFile = path.join(ASSETS_DIR, file);
     fs.copyFileSync(srcFile, path.join(OUTPUTS_DIR, file));
+    fs.copyFileSync(srcFile, path.join(PUBLIC_DIR, file));
     fs.copyFileSync(srcFile, path.join(ROOT, file));
     console.log(`  -> Copied asset: ${file}`);
   }
@@ -93,8 +102,17 @@ if (fs.existsSync(ASSETS_DIR)) {
 const ogFile = path.join(JASOOS_DIR, 'og.png');
 if (fs.existsSync(ogFile)) {
   fs.copyFileSync(ogFile, path.join(OUTPUTS_DIR, 'og.png'));
+  fs.copyFileSync(ogFile, path.join(PUBLIC_DIR, 'og.png'));
   fs.copyFileSync(ogFile, path.join(ROOT, 'og.png'));
   console.log('  -> Copied og.png');
+}
+
+// Copy trailer video if present
+const trailerFile = path.join(OUTPUTS_DIR, 'jasoos_trailer.mp4');
+if (fs.existsSync(trailerFile)) {
+  fs.copyFileSync(trailerFile, path.join(PUBLIC_DIR, 'jasoos_trailer.mp4'));
+  fs.copyFileSync(trailerFile, path.join(ROOT, 'jasoos_trailer.mp4'));
+  console.log('  -> Copied trailer video');
 }
 
 console.log('✨ Build completed successfully!');
