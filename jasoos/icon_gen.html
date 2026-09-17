@@ -1,0 +1,76 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#111">
+<script>
+function draw(S, mask) {
+  const c = document.createElement('canvas'); c.width = c.height = S;
+  const x = c.getContext('2d');
+  // safe zone: maskable icons get 20% padding on every side
+  const pad = mask ? S * 0.10 : 0, R = S - pad * 2, cx = S / 2, cy = S / 2;
+  // background
+  if (mask) { x.fillStyle = '#0d0618'; x.fillRect(0, 0, S, S); }
+  else {
+    const r = S * 0.22; x.beginPath();
+    x.moveTo(r, 0); x.arcTo(S, 0, S, S, r); x.arcTo(S, S, 0, S, r); x.arcTo(0, S, 0, 0, r); x.arcTo(0, 0, S, 0, r);
+    x.closePath(); x.clip();
+    x.fillStyle = '#0d0618'; x.fillRect(0, 0, S, S);
+  }
+  // posterized radial glow: banded solid fills compress ~10x better than a smooth
+  // gradient in PNG, and read as an intentional flat-design halo.
+  const A = [13, 6, 24], B = [79, 22, 74], STEPS = 9;
+  for (let i = STEPS; i >= 1; i--) {
+    const f = i / STEPS, m = 1 - f;
+    x.fillStyle = 'rgb(' + A.map((a, j) => Math.round(a + (B[j] - a) * m * m)).join(',') + ')';
+    x.beginPath(); x.arc(cx, S * 0.36, R * 0.80 * f, 0, 7); x.fill();
+  }
+
+  // mandala rings
+  x.save(); x.translate(cx, cy); x.globalAlpha = .22; x.strokeStyle = '#f5b83d';
+  for (let k = 0; k < 3; k++) {
+    x.lineWidth = S * .006; x.beginPath(); x.arc(0, 0, R * (.30 + k * .075), 0, 7); x.stroke();
+  }
+  x.globalAlpha = .3;
+  for (let i = 0; i < 16; i++) {
+    const a = i / 16 * Math.PI * 2;
+    x.beginPath(); x.ellipse(Math.cos(a) * R * .40, Math.sin(a) * R * .40, R * .045, R * .018, a, 0, 7); x.stroke();
+  }
+  x.restore();
+
+  // magnifier: circle + handle, holding a masked face
+  const lr = R * 0.232, lx = cx - R * 0.052, ly = cy - R * 0.132;
+  // lens glass
+  x.save(); x.beginPath(); x.arc(lx, ly, lr, 0, 7); x.clip();
+  x.fillStyle = '#1d0f2f'; x.fillRect(lx - lr, ly - lr, lr * 2, lr * 2);
+  x.fillStyle = '#2a1440';
+  x.beginPath(); x.moveTo(lx - lr, ly + lr); x.lineTo(lx + lr, ly - lr); x.lineTo(lx + lr, ly + lr); x.closePath(); x.fill();
+  // hat + face silhouette inside the lens
+  x.fillStyle = '#e0457b';
+  x.beginPath(); x.ellipse(lx, ly + lr * .10, lr * .40, lr * .46, 0, 0, 7); x.fill();   // head
+  x.fillStyle = '#ff9f45';
+  x.beginPath(); x.ellipse(lx, ly - lr * .30, lr * .78, lr * .13, 0, 0, 7); x.fill();   // hat brim
+  x.beginPath();
+  x.moveTo(lx - lr * .40, ly - lr * .32); x.quadraticCurveTo(lx, ly - lr * .95, lx + lr * .40, ly - lr * .32);
+  x.closePath(); x.fill();                                                              // hat crown
+  x.fillStyle = '#0d0618';
+  x.beginPath(); x.roundRect(lx - lr * .40, ly + lr * .02, lr * .80, lr * .17, lr * .08); x.fill(); // eye mask
+  x.restore();
+  // handle first, then rim over its root so the two read as one solid object
+  const ha = Math.PI * 0.25, hc = Math.cos(ha), hs = Math.sin(ha);
+  x.strokeStyle = '#e0932a'; x.lineCap = 'round'; x.lineWidth = R * 0.072;
+  x.beginPath();
+  x.moveTo(lx + hc * lr * 0.90, ly + hs * lr * 0.90);
+  x.lineTo(lx + hc * lr * 1.86, ly + hs * lr * 1.86);
+  x.stroke();
+  x.strokeStyle = '#f5b83d'; x.lineWidth = R * 0.056;
+  x.beginPath(); x.arc(lx, ly, lr, 0, 7); x.stroke();
+  x.strokeStyle = 'rgba(255,255,255,.34)'; x.lineWidth = R * 0.014;
+  x.beginPath(); x.arc(lx, ly, lr * 0.85, Math.PI * 1.06, Math.PI * 1.48); x.stroke();
+
+  // wordmark
+  x.fillStyle = '#fff6e8'; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.font = '800 ' + (R * 0.155) + 'px "Baloo 2", system-ui, sans-serif';
+  x.letterSpacing = (R * 0.028) + 'px';
+  x.fillText('JASOOS', cx, cy + R * 0.352);
+  return c.toDataURL('image/png');
+}
+window.ICONS = { i192: draw(192, false), i512: draw(512, false), imask: draw(512, true) };
+document.body.innerHTML = '<img src="' + ICONS.i192 + '"><img src="' + ICONS.i512 + '" width=192><img src="' + ICONS.imask + '" width=192>';
+</script>

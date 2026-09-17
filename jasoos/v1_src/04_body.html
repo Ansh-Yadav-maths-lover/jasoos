@@ -1,0 +1,230 @@
+<canvas id="bg"></canvas><div id="vig"></div>
+<div id="app">
+
+<!-- ============ HOME ============ -->
+<section class="scr on" id="s-home">
+  <div class="grow center" style="gap:4px">
+    <svg class="eye" viewBox="0 0 100 100" fill="none">
+      <circle cx="42" cy="42" r="26" stroke="#f5b83d" stroke-width="7"/>
+      <path d="M60 60l26 26" stroke="#f5b83d" stroke-width="10" stroke-linecap="round"/>
+      <circle cx="42" cy="42" r="11" fill="#e0457b"/>
+      <circle cx="37" cy="37" r="3.6" fill="#fff" opacity=".85"/>
+    </svg>
+    <div class="brand">
+      <div class="logo">JASOOS</div>
+      <div class="tag">जासूस · The Desi Imposter</div>
+    </div>
+    <p class="sub mt">Everyone gets the same secret word — except the <b class="rose">Jasoos</b>. One-word clues. Then you all vote.</p>
+    <div class="row wrap gap6 mt" style="justify-content:center">
+      <span class="pill y">3–12 khiladi</span><span class="pill y">346 desi shabd</span><span class="pill y">14 categories</span>
+    </div>
+    <div class="marq mt" style="width:100%"><div id="marq"></div></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px;flex:none">
+    <button class="btn p" id="b-local">🪔 &nbsp;Ek Phone — Pass &amp; Play</button>
+    <div class="grid2">
+      <button class="btn t" id="b-create">📡 Online Room</button>
+      <button class="btn ghost" id="b-join">🔑 Join Code</button>
+    </div>
+    <div class="row" style="justify-content:center;gap:18px;margin-top:2px">
+      <button class="link" id="b-how">Kaise khelein?</button>
+      <button class="link" id="b-sound">🔊 Sound: On</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SETUP (local) ============ -->
+<section class="scr" id="s-setup">
+  <div class="top"><button class="iconbtn" data-back="s-home">‹</button><div class="ttl">Khiladi &amp; Settings</div></div>
+  <div class="grow scroll" style="padding-bottom:8px">
+    <div class="card">
+      <div class="row sb"><div class="up gold">Players</div><div class="sm dim" id="pcount">0</div></div>
+      <div class="plist mt" id="setup-players"></div>
+      <div class="row mt gap6">
+        <input class="inp" id="pname" placeholder="Naam likho…" maxlength="12" autocomplete="off">
+        <button class="btn p sm2" id="b-add" style="flex:none;padding:13px 18px">Add</button>
+      </div>
+      <div class="row wrap gap6 mt sm" id="quickadd"></div>
+    </div>
+    <div class="card mt" id="settings-card"></div>
+    <div class="card mt">
+      <div class="up gold">Categories</div>
+      <div class="sm dim" style="margin:4px 0 10px">Words are pulled from whatever you switch on.</div>
+      <div class="catbox" id="cats"></div>
+      <div class="row mt gap6"><button class="btn ghost sm2" id="cat-all">Select all</button><button class="btn ghost sm2" id="cat-none">Clear</button></div>
+    </div>
+  </div>
+  <button class="btn p mt" id="b-startlocal" style="flex:none">Shuru karo →</button>
+</section>
+
+<!-- ============ ROOM LOBBY (online) ============ -->
+<section class="scr" id="s-room">
+  <div class="top"><button class="iconbtn" id="b-leave">‹</button><div class="ttl">Room</div>
+    <div class="pill y" id="room-role" style="margin-left:auto">—</div></div>
+  <div class="grow scroll">
+    <div class="card center">
+      <div class="up dim">Room Code</div>
+      <div class="code" id="room-code">····</div>
+      <div class="row gap6 mt" style="justify-content:center">
+        <button class="btn ghost sm2" id="b-copy">📋 Copy link</button>
+        <button class="btn ghost sm2" id="b-share">↗ Share</button>
+      </div>
+      <div class="sm dim mt">Friends open the link, type a naam, done.</div>
+    </div>
+    <div class="card mt">
+      <div class="row sb"><div class="up gold">In the room</div><div class="sm dim" id="room-count">0</div></div>
+      <div class="plist mt" id="room-players"></div>
+    </div>
+    <div class="card mt" id="room-settings"></div>
+  </div>
+  <div id="room-actions" style="flex:none"></div>
+</section>
+
+<!-- ============ PASS DEVICE ============ -->
+<section class="scr" id="s-pass">
+  <div class="grow center">
+    <div class="av lg" id="pass-av" style="margin-bottom:14px">🙂</div>
+    <div class="up dim">Phone pass karo</div>
+    <h1 style="font-size:38px;margin:6px 0 4px" id="pass-name">—</h1>
+    <p class="sub" id="pass-note">Sirf tum dekho. Baaki sab dur raho.</p>
+    <div class="dots mt" id="pass-dots"></div>
+  </div>
+  <button class="btn p" id="b-pass-ok" style="flex:none">Main hoon <span id="pass-name2"></span> — dikhao</button>
+</section>
+
+<!-- ============ REVEAL CARD ============ -->
+<section class="scr" id="s-reveal">
+  <div class="top"><div class="ttl" id="rev-title">Tumhara card</div>
+    <div class="pill y" id="rev-cat" style="margin-left:auto">—</div></div>
+  <div class="grow center">
+    <div class="stage">
+      <div class="flip" id="flip">
+        <div class="face back">
+          <svg class="mand" viewBox="0 0 200 200" id="mand1"></svg>
+          <div style="font-family:'Baloo 2';font-weight:800;font-size:44px;letter-spacing:.1em;color:#f5b83d">?</div>
+          <div class="up dim">Jasoos</div>
+          <div class="tapme">Tap to reveal</div>
+        </div>
+        <div class="face front" id="cardfront">
+          <svg class="mand" viewBox="0 0 200 200" id="mand2"></svg>
+          <div class="up" id="cf-role">—</div>
+          <div class="word" id="cf-word">—</div>
+          <div class="hint" id="cf-hint"></div>
+          <div class="pill y" id="cf-cat" style="position:absolute;bottom:16px">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="btn p" id="b-rev-next" style="flex:none;visibility:hidden">Samajh gaya →</button>
+</section>
+
+<!-- ============ CLUE ROUNDS ============ -->
+<section class="scr" id="s-clue">
+  <div class="top">
+    <div class="ttl">Round <span id="cl-round">1</span><span class="dim" id="cl-of"></span></div>
+    <button class="iconbtn" id="b-mycard" style="margin-left:auto" title="Mera card">🃏</button>
+    <button class="iconbtn" id="b-menu">⋯</button>
+  </div>
+  <div class="tbar mb" id="cl-tbar" style="display:none"><i style="width:100%"></i></div>
+  <div class="card tight" id="cl-turnbox">
+    <div class="row"><div class="av" id="cl-av">🙂</div>
+      <div style="flex:1;min-width:0"><div class="up dim">Baari hai</div>
+        <div style="font-family:'Baloo 2';font-weight:800;font-size:20px" id="cl-who">—</div></div>
+      <div class="num gold" id="cl-timer"></div>
+    </div>
+  </div>
+  <div class="grow scroll mt"><div class="feed" id="cl-feed"></div>
+    <div class="ctr dim sm mt" id="cl-empty">Ek shabd ka clue do — aisa jo saabit kare tum jaante ho, par Jasoos ko na bataye.</div>
+  </div>
+  <div style="flex:none" id="cl-action"></div>
+</section>
+
+<!-- ============ DISCUSS ============ -->
+<section class="scr" id="s-discuss">
+  <div class="top"><div class="ttl">Bahes — Discussion</div><div class="num gold" id="ds-timer" style="margin-left:auto"></div></div>
+  <div class="tbar mb" id="ds-tbar"><i style="width:100%"></i></div>
+  <div class="grow scroll"><div class="feed" id="ds-feed"></div></div>
+  <div class="card tight mt" style="flex:none">
+    <div class="sm dim ctr">Sab clues upar hain. Kis par shak hai? Baat karo, phir vote.</div>
+  </div>
+  <button class="btn r mt" id="b-tovote" style="flex:none">🗳 Vote karo</button>
+</section>
+
+<!-- ============ WAITING ROOM ============ -->
+<section class="scr" id="s-wait">
+  <div class="grow center">
+    <div class="trophy">⏳</div>
+    <h1 class="mt" style="font-size:30px">Round chal raha hai</h1>
+    <p class="sub mt" id="wt-note">Agle round mein tum bhi khel loge — yahin ruko.</p>
+    <div class="card tight mt2" style="min-width:220px"><div class="ctr sm dim" id="wt-info">—</div></div>
+  </div>
+  <button class="btn ghost" id="b-wait-leave" style="flex:none">Chhodo</button>
+</section>
+
+<!-- ============ VOTE ============ -->
+<section class="scr" id="s-vote">
+  <div class="top"><div class="ttl" id="vt-title">Vote</div>
+    <div class="num gold" id="vt-timer" style="margin-left:auto"></div>
+    <div class="pill y" id="vt-prog">—</div></div>
+  <div class="tbar mb" id="vt-tbar"><i style="width:100%"></i></div>
+  <div class="sm dim mb" id="vt-note">Kis ko bahar karna hai?</div>
+  <div class="grow scroll"><div class="plist" id="vt-list"></div></div>
+  <div style="flex:none" id="vt-action"></div>
+</section>
+
+<!-- ============ EJECT REVEAL ============ -->
+<section class="scr" id="s-eject">
+  <div class="grow center">
+    <div class="up dim" id="ej-pre">Bahar nikala gaya</div>
+    <div class="av lg mt" id="ej-av" style="margin-bottom:8px">🙂</div>
+    <h1 style="font-size:32px" id="ej-name">—</h1>
+    <div class="mt2 ctr">
+      <div class="bigres" id="ej-verdict">—</div>
+      <p class="sub mt" id="ej-note"></p>
+    </div>
+    <div class="plist mt2" id="ej-tally" style="width:100%;max-width:340px"></div>
+  </div>
+  <button class="btn p" id="b-ej-next" style="flex:none">Aage →</button>
+</section>
+
+<!-- ============ JASOOS GUESS ============ -->
+<section class="scr" id="s-guess">
+  <div class="tbar mb" id="gs-tbar" style="flex:none"><i style="width:100%"></i></div>
+  <div class="grow scroll">
+    <div class="ctr mt">
+      <div class="up rose">Jasoos ka aakhri mauka</div>
+      <h1 class="mt" style="font-size:28px" id="gs-title">Secret word guess karo</h1>
+      <p class="sub mt" id="gs-note">Sahi guess = Jasoos jeeta. Galat = pakde gaye.</p>
+    </div>
+    <div class="plist mt2" id="gs-opts"></div>
+  </div>
+  <div style="flex:none" id="gs-action"></div>
+</section>
+
+<!-- ============ END OF ROUND ============ -->
+<section class="scr" id="s-end">
+  <div class="grow scroll">
+    <div class="ctr">
+      <div class="trophy" id="en-ico">🏆</div>
+      <div class="bigres" id="en-title">—</div>
+      <p class="sub mt" id="en-note"></p>
+    </div>
+    <div class="card mt">
+      <div class="up gold ctr">The secret word tha</div>
+      <div class="word ctr mt" id="en-word">—</div>
+      <div class="ctr sm dim mt" id="en-cat"></div>
+      <div class="hr"></div>
+      <div class="plist" id="en-roles"></div>
+    </div>
+    <div class="card mt">
+      <div class="up gold">Scoreboard</div>
+      <div class="plist mt" id="en-score"></div>
+    </div>
+  </div>
+  <div style="flex:none" id="en-action"></div>
+</section>
+</div>
+
+<!-- ============ OVERLAYS ============ -->
+<div class="sheet" id="sheet"><div class="box" id="sheet-box"></div></div>
+<div class="toast" id="toast"></div>

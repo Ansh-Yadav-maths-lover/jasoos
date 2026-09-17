@@ -1,0 +1,22 @@
+{
+  "name": "JASOOS — जासूस",
+  "short_name": "Jasoos",
+  "description": "Desi imposter party game. Ek shabd, ek jasoos. 3-12 players, ek phone ya online.",
+  "lang": "hi",
+  "start_url": "/?src=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0512",
+  "theme_color": "#0a0512",
+  "categories": ["games", "entertainment", "social"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-mask.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Daily Jasoos", "short_name": "Daily", "url": "/?src=pwa#daily" },
+    { "name": "Solo vs Bots", "short_name": "Solo", "url": "/?src=pwa#solo" }
+  ]
+}

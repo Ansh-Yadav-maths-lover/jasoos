@@ -1,0 +1,57 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Mukta:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{width:1200px;height:630px;overflow:hidden;background:#0b0713;color:#f6eeff;font-family:'Mukta',sans-serif;
+  position:relative;display:flex;align-items:center;justify-content:space-between;padding:0 72px}
+.bgw{position:absolute;inset:0;
+  background:radial-gradient(70% 90% at 18% -10%,rgba(224,69,123,.35),transparent 60%),
+             radial-gradient(70% 90% at 95% 110%,rgba(245,184,61,.25),transparent 60%),
+             radial-gradient(120% 120% at 50% 50%,transparent 40%,rgba(0,0,0,.75));}
+svg.mand{position:absolute;opacity:.11;width:760px;right:-160px;top:-90px}
+.left{position:relative;z-index:2;max-width:600px}
+.eyebrow{display:flex;align-items:center;gap:12px;color:#ffd98a;letter-spacing:.22em;text-transform:uppercase;
+  font-weight:600;font-size:19px}
+.logo{font-family:'Baloo 2';font-weight:800;font-size:132px;line-height:.98;letter-spacing:.06em;margin:6px 0 2px;
+  background:linear-gradient(172deg,#fff6dd 6%,#f5b83d 46%,#c9821a 94%);-webkit-background-clip:text;color:transparent;
+  filter:drop-shadow(0 10px 26px rgba(245,184,61,.35))}
+.tag{font-family:'Baloo 2';font-weight:700;font-size:34px;color:#fff}
+.sub{font-size:22px;color:#b6a7d3;margin-top:14px;line-height:1.35}
+.pills{display:flex;gap:10px;margin-top:26px}
+.pill{padding:9px 18px;border-radius:99px;background:rgba(245,184,61,.14);color:#f5b83d;font-weight:600;font-size:18px;
+  border:1px solid rgba(245,184,61,.35)}
+.right{position:relative;z-index:2;display:flex;gap:22px;align-items:center}
+.card{width:230px;height:326px;border-radius:26px;padding:22px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;text-align:center;box-shadow:0 30px 70px -20px #000;
+  border:2px solid rgba(245,184,61,.3);position:relative;overflow:hidden}
+.card.civ{background:linear-gradient(160deg,#0f3b3a,#0c1a24);border-color:rgba(34,184,166,.55);transform:rotate(-6deg)}
+.card.spy{background:linear-gradient(160deg,#4a0f28,#1b0a16);border-color:rgba(224,69,123,.6);transform:rotate(6deg)}
+.role{letter-spacing:.2em;text-transform:uppercase;font-weight:700;font-size:16px}
+.civ .role{color:#4fe0cc}.spy .role{color:#ff7ba8}
+.w{font-family:'Baloo 2';font-weight:800;font-size:38px;line-height:1.08}
+.q{font-family:'Baloo 2';font-weight:800;font-size:74px;color:#ff7ba8}
+.foot{position:absolute;left:72px;bottom:34px;z-index:2;color:#8d7fab;font-size:20px;letter-spacing:.04em}
+</style></head><body>
+<div class="bgw"></div>
+<svg class="mand" viewBox="0 0 200 200" id="m"></svg>
+<div class="left">
+  <div class="eyebrow">🔍 जासूस · Desi Imposter Party Game</div>
+  <div class="logo">JASOOS</div>
+  <div class="tag">Ek shabd. Sab jhooth. Ek jasoos.</div>
+  <div class="sub">Everyone gets the same secret word — except the Jasoos.<br>Give clues. Argue. Vote someone out.</div>
+  <div class="pills"><span class="pill">3–12 players</span><span class="pill">346 desi words</span><span class="pill">No install</span></div>
+</div>
+<div class="right">
+  <div class="card civ"><div class="role">🪔 Nagrik</div><div class="w">Vada Pav</div><div style="color:#8fd8cf;font-size:15px">Tum jaante ho</div></div>
+  <div class="card spy"><div class="role">🔍 Jasoos</div><div class="q">?</div><div style="color:#e3a2ba;font-size:15px">Kuch nahi pata — bluff karo</div></div>
+</div>
+<div class="foot">jasoos.games.bu.app</div>
+<script>
+const R=100;let p='';
+for(let ring=0;ring<4;ring++){const r=22+ring*22,n=8+ring*6;
+for(let i=0;i<n;i++){const a=i/n*Math.PI*2;p+=`<circle cx="${(R+Math.cos(a)*r).toFixed(1)}" cy="${(R+Math.sin(a)*r).toFixed(1)}" r="${(4-ring*.6).toFixed(1)}" fill="#f5b83d"/>`;}
+p+=`<circle cx="${R}" cy="${R}" r="${r}" fill="none" stroke="#f5b83d" stroke-width=".8"/>`;}
+for(let i=0;i<12;i++){const a=i/12*Math.PI*2;p+=`<path d="M100 100 Q${100+Math.cos(a-.18)*70} ${100+Math.sin(a-.18)*70} ${100+Math.cos(a)*94} ${100+Math.sin(a)*94} Q${100+Math.cos(a+.18)*70} ${100+Math.sin(a+.18)*70} 100 100" fill="none" stroke="#f5b83d" stroke-width=".7"/>`;}
+document.getElementById('m').innerHTML=p;
+</script>
+</body></html>

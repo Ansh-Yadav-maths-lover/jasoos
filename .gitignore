@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Executables & Binaries
+bin/
+*.exe
+
+# Agent & IDE files
+.gemini/
+.agents/
+MEMORY.md
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vercel
+.vercel

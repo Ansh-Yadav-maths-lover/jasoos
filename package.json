@@ -1,0 +1,27 @@
+{
+  "name": "jasoos",
+  "version": "1.0.0",
+  "description": "JASOOS — India's Desi Imposter Party Game (जासूस)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "node build.js",
+    "build:py": "python jasoos/build.py",
+    "tunnel": "bin\\cloudflared.exe tunnel --edge-ip-version 4 --url http://127.0.0.1:3000",
+    "test": "node --check server.js && node build.js"
+  },
+  "keywords": [
+    "jasoos",
+    "imposter",
+    "party-game",
+    "hindi",
+    "desi-game",
+    "spyfall"
+  ],
+  "author": "Ansh Yadav",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.21.3"
+  }
+}

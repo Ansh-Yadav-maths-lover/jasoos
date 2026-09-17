@@ -1,0 +1,349 @@
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas><div id="vig"></div><canvas id="fx" aria-hidden="true"></canvas>
+<div id="app">
+
+<!-- ============ LANGUAGE ============ -->
+<section class="scr" id="s-lang">
+  <div class="grow center">
+    <svg class="eye glow" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <circle cx="42" cy="42" r="26" stroke="#f5b83d" stroke-width="7"/>
+      <path d="M60 60l26 26" stroke="#f5b83d" stroke-width="10" stroke-linecap="round"/>
+      <circle cx="42" cy="42" r="11" fill="#e0457b"/>
+      <circle cx="37" cy="37" r="3.6" fill="#fff" opacity=".85"/>
+    </svg>
+    <div class="logo mt">JASOOS</div>
+    <div class="up dim mt" data-t="ob.pick">Bhasha chuno</div>
+    <div class="lang mt" id="lang-list" style="width:100%;max-width:340px"></div>
+  </div>
+</section>
+
+<!-- ============ ONBOARDING ============ -->
+<section class="scr" id="s-ob">
+  <div class="ob">
+    <div class="row fn" style="justify-content:flex-end"><button class="link" id="ob-skip" data-t="ui.skip">Skip</button></div>
+    <div class="obslide" id="ob-slide">
+      <div class="obart" id="ob-art"></div>
+      <h1 class="obh" id="ob-h">—</h1>
+      <p class="obp" id="ob-p">—</p>
+    </div>
+    <div class="dots mb" id="ob-dots"></div>
+    <button class="btn p fn" id="ob-next" data-t="ui.next">Aage</button>
+  </div>
+</section>
+
+<!-- ============ HOME ============ -->
+<section class="scr on" id="s-home">
+  <div class="row fn" style="padding-bottom:4px">
+    <button class="iconbtn" id="h-stats" aria-label="Stats">📊</button>
+    <div class="f1"></div>
+    <span class="streak" id="h-streak" style="display:none">🔥 <b id="h-streakn">0</b></span>
+    <button class="iconbtn" id="h-lang" aria-label="Language">🌐</button>
+    <button class="iconbtn" id="h-snd" aria-label="Sound">🔊</button>
+  </div>
+  <div class="grow center scroll" style="gap:2px">
+    <svg class="eye" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <circle cx="42" cy="42" r="26" stroke="#f5b83d" stroke-width="7"/>
+      <path d="M60 60l26 26" stroke="#f5b83d" stroke-width="10" stroke-linecap="round"/>
+      <circle cx="42" cy="42" r="11" fill="#e0457b"/>
+      <circle cx="37" cy="37" r="3.6" fill="#fff" opacity=".85"/>
+    </svg>
+    <div class="brand">
+      <h1 class="logo">JASOOS</h1>
+      <div class="tag" data-t="home.tag">जासूस · The Desi Imposter</div>
+    </div>
+    <p class="sub mt1" id="h-sub">—</p>
+    <div class="row wrap gap6 mt1" style="justify-content:center" id="h-pills"></div>
+    <div class="marq mt1" style="width:100%"><div id="marq"></div></div>
+  </div>
+  <div class="modes fn mt1" id="h-modes"></div>
+  <div class="ibar mt1" id="h-install" style="display:none">
+    <span style="font-size:22px">📲</span>
+    <div class="t" data-t="home.install">Install karo</div>
+    <button class="btn g sm2" id="h-instb" data-t="home.installb">Install</button>
+  </div>
+  <div class="row fn mt1" style="justify-content:center;gap:16px">
+    <button class="link" id="h-how" data-t="ui.rules">Kaise khelein</button>
+    <button class="link" id="h-packs" data-t="pk.title">Mere Shabd</button>
+    <button class="link" id="h-share" data-t="sh.invite">Doston ko bulao</button>
+  </div>
+</section>
+
+<!-- ============ LOCAL SETUP ============ -->
+<section class="scr" id="s-setup">
+  <div class="top"><button class="iconbtn" data-back="s-home" aria-label="Back">‹</button>
+    <div class="ttl" data-t="set.title">Khiladi &amp; Settings</div></div>
+  <div class="grow scroll" style="padding-bottom:8px">
+    <div class="card">
+      <div class="row sb"><div class="up gold" data-t="ui.players">Players</div><div class="sm dim" id="pcount">0</div></div>
+      <div class="plist mt" id="setup-players"></div>
+      <div class="row mt gap6">
+        <input class="inp" id="pname" maxlength="12" autocomplete="off" aria-label="Player name">
+        <button class="btn p sm2 fn" id="b-add" style="padding:13px 18px" data-t="set.add">Add</button>
+      </div>
+      <div class="row wrap gap6 mt sm" id="quickadd"></div>
+    </div>
+    <div class="card mt" id="settings-card"></div>
+    <div class="card mt">
+      <div class="up gold" data-t="ui.cats">Categories</div>
+      <div class="sm dim" style="margin:4px 0 10px" data-t="set.catnote">note</div>
+      <div class="catbox" id="cats"></div>
+      <div class="row mt gap6"><button class="btn ghost sm2" id="cat-all" data-t="ui.selectall">Sab</button>
+        <button class="btn ghost sm2" id="cat-none" data-t="ui.clear">Clear</button></div>
+    </div>
+  </div>
+  <button class="btn p mt fn" id="b-startlocal" data-t="ui.start">Shuru karo</button>
+</section>
+
+<!-- ============ SOLO SETUP ============ -->
+<section class="scr" id="s-solo">
+  <div class="top"><button class="iconbtn" data-back="s-home" aria-label="Back">‹</button>
+    <div class="ttl" data-t="solo.title">Akele Khelo</div></div>
+  <div class="grow scroll">
+    <div class="card">
+      <div class="row"><span style="font-size:30px">🤖</span>
+        <div class="f1 sm dim" id="solo-sub">—</div></div>
+    </div>
+    <div class="card mt" id="solo-set"></div>
+    <div class="card mt">
+      <div class="up gold" data-t="ui.cats">Categories</div>
+      <div class="catbox mt" id="solo-cats"></div>
+    </div>
+  </div>
+  <button class="btn p mt fn" id="b-solostart" data-t="solo.begin">Khel shuru karo</button>
+</section>
+
+<!-- ============ DAILY ============ -->
+<section class="scr" id="s-daily">
+  <div class="top"><button class="iconbtn" data-back="s-home" aria-label="Back">‹</button>
+    <div class="ttl" data-t="day.title">Aaj ka Jasoos</div>
+    <div class="pill y fn" id="day-no" style="margin-left:auto">#1</div></div>
+  <div class="grow center scroll">
+    <div class="trophy" id="day-ico">🗓️</div>
+    <h1 class="mt" id="day-h">—</h1>
+    <p class="sub mt" id="day-sub">—</p>
+    <div class="row gap12 mt2" style="justify-content:center">
+      <div class="stat" style="min-width:96px"><b id="day-cur">0</b><span data-t="day.streak">Streak</span></div>
+      <div class="stat" style="min-width:96px"><b id="day-best">0</b><span data-t="day.best">Best</span></div>
+    </div>
+    <div class="card tight mt2" id="day-done" style="display:none;max-width:340px">
+      <div class="ctr sm" id="day-donetxt">—</div>
+    </div>
+  </div>
+  <div class="fn" id="day-act"></div>
+</section>
+
+<!-- ============ ROOM ============ -->
+<section class="scr" id="s-room">
+  <div class="top"><button class="iconbtn" id="b-leave" aria-label="Leave">‹</button>
+    <div class="ttl" data-t="room.title">Room</div>
+    <div class="pill y fn" id="room-role" style="margin-left:auto">—</div></div>
+  <div class="grow scroll">
+    <div class="card center">
+      <div class="up dim" data-t="room.code">Room Code</div>
+      <div class="code" id="room-code">····</div>
+      <div class="grid2 mt" style="width:100%">
+        <button class="btn wa sm2" id="b-share" style="width:100%" data-t="ui.whatsapp">WhatsApp</button>
+        <button class="btn ghost sm2" id="b-copy" style="width:100%" data-t="ui.copy">Copy link</button>
+      </div>
+      <div class="sm dim mt" data-t="room.hint">hint</div>
+    </div>
+    <div class="card mt">
+      <div class="row sb"><div class="up gold" data-t="room.in">In the room</div><div class="sm dim" id="room-count">0</div></div>
+      <div class="plist mt" id="room-players"></div>
+    </div>
+    <div class="card mt" id="room-settings"></div>
+  </div>
+  <div class="fn" id="room-actions"></div>
+</section>
+
+<!-- ============ PASS DEVICE ============ -->
+<section class="scr" id="s-pass">
+  <div class="grow center">
+    <div class="av lg" id="pass-av" style="margin-bottom:14px">🙂</div>
+    <div class="up dim" data-t="pass.hand">Phone pass karo</div>
+    <h1 style="font-size:36px;margin:6px 0 4px" id="pass-name">—</h1>
+    <p class="sub" id="pass-note">—</p>
+    <div class="dots mt" id="pass-dots"></div>
+  </div>
+  <button class="btn p fn" id="b-pass-ok">—</button>
+</section>
+
+<!-- ============ REVEAL ============ -->
+<section class="scr" id="s-reveal">
+  <div class="top"><div class="ttl" id="rev-title">—</div>
+    <div class="pill y fn" id="rev-cat" style="margin-left:auto">—</div></div>
+  <div class="grow center">
+    <div class="stage">
+      <div class="flip" id="flip" role="button" tabindex="0" aria-label="Reveal card">
+        <div class="face back">
+          <svg class="mand" viewBox="0 0 200 200" id="mand1" aria-hidden="true"></svg>
+          <div class="dsp" style="font-size:44px;letter-spacing:.1em;color:#f5b83d">?</div>
+          <div class="up dim">JASOOS</div>
+          <div class="tapme" data-t="rev.tap">Tap to reveal</div>
+        </div>
+        <div class="face front" id="cardfront">
+          <svg class="mand" viewBox="0 0 200 200" id="mand2" aria-hidden="true"></svg>
+          <div class="up" id="cf-role">—</div>
+          <div class="word" id="cf-word">—</div>
+          <div class="hint" id="cf-hint"></div>
+          <div class="pill y" id="cf-cat" style="position:absolute;bottom:16px">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="btn p fn" id="b-rev-next" style="visibility:hidden">—</button>
+</section>
+
+<!-- ============ CLUES ============ -->
+<section class="scr" id="s-clue">
+  <div class="top">
+    <div class="ttl"><span data-t="ui.round">Round</span> <span id="cl-round">1</span><span class="dim" id="cl-of"></span></div>
+    <button class="iconbtn" id="b-mycard" style="margin-left:auto" aria-label="My card">🃏</button>
+    <button class="iconbtn" id="b-menu" aria-label="Menu">⋯</button>
+  </div>
+  <div class="tbar mb" id="cl-tbar" style="display:none"><i style="width:100%"></i></div>
+  <div class="card tight fn" id="cl-turnbox">
+    <div class="row"><div class="av" id="cl-av">🙂</div>
+      <div class="f1"><div class="up dim" id="cl-lab">—</div>
+        <div class="dsp" style="font-size:20px" id="cl-who">—</div></div>
+      <div class="num gold" id="cl-timer"></div>
+    </div>
+  </div>
+  <div class="grow scroll mt"><div class="feed" id="cl-feed"></div>
+    <div class="ctr dim sm mt" id="cl-empty" data-t="clue.empty">—</div>
+  </div>
+  <div class="fn" id="cl-action"></div>
+</section>
+
+<!-- ============ DISCUSS ============ -->
+<section class="scr" id="s-discuss">
+  <div class="top"><div class="ttl" data-t="dis.title">Bahes</div>
+    <div class="num gold fn" id="ds-timer" style="margin-left:auto"></div></div>
+  <div class="tbar mb" id="ds-tbar"><i style="width:100%"></i></div>
+  <div class="grow scroll"><div class="feed" id="ds-feed"></div></div>
+  <div class="reacts mt fn" id="ds-reacts"></div>
+  <div class="card tight mt fn"><div class="sm dim ctr" data-t="dis.note">—</div></div>
+  <button class="btn r mt fn" id="b-tovote" data-t="dis.tovote">Vote karo</button>
+</section>
+
+<!-- ============ WAIT ============ -->
+<section class="scr" id="s-wait">
+  <div class="grow center">
+    <div class="trophy">⏳</div>
+    <h1 class="mt" style="font-size:28px" data-t="wait.title">Round chal raha hai</h1>
+    <p class="sub mt" data-t="wait.note">—</p>
+    <div class="card tight mt2" style="min-width:220px"><div class="ctr sm dim" id="wt-info">—</div></div>
+  </div>
+  <button class="btn ghost fn" id="b-wait-leave" data-t="wait.leave">Chhodo</button>
+</section>
+
+<!-- ============ VOTE ============ -->
+<section class="scr" id="s-vote">
+  <div class="top"><div class="ttl" id="vt-title">Vote</div>
+    <div class="num gold fn" id="vt-timer" style="margin-left:auto"></div>
+    <div class="pill y fn" id="vt-prog">—</div></div>
+  <div class="tbar mb" id="vt-tbar"><i style="width:100%"></i></div>
+  <div class="sm dim mb" id="vt-note">—</div>
+  <div class="grow scroll"><div id="vt-list"></div></div>
+  <div class="fn" id="vt-action"></div>
+</section>
+
+<!-- ============ EJECT ============ -->
+<section class="scr" id="s-eject">
+  <div class="grow center scroll">
+    <div class="up dim" id="ej-pre">—</div>
+    <div class="av lg mt" id="ej-av" style="margin-bottom:8px">🙂</div>
+    <h1 style="font-size:30px" id="ej-name">—</h1>
+    <div class="mt2 ctr">
+      <div class="bigres" id="ej-verdict">—</div>
+      <p class="sub mt" id="ej-note"></p>
+    </div>
+    <div class="plist mt2" id="ej-tally" style="width:100%;max-width:340px"></div>
+  </div>
+  <button class="btn p fn" id="b-ej-next" data-t="ui.next">Aage</button>
+</section>
+
+<!-- ============ GUESS ============ -->
+<section class="scr" id="s-guess">
+  <div class="tbar mb fn" id="gs-tbar"><i style="width:100%"></i></div>
+  <div class="grow scroll">
+    <div class="ctr mt">
+      <div class="up rose" data-t="gs.pre">Jasoos ka aakhri mauka</div>
+      <h1 class="mt" style="font-size:26px" id="gs-title">—</h1>
+      <p class="sub mt" id="gs-note">—</p>
+    </div>
+    <div class="plist mt2" id="gs-opts"></div>
+  </div>
+  <div class="fn" id="gs-action"></div>
+</section>
+
+<!-- ============ END ============ -->
+<section class="scr" id="s-end">
+  <div class="grow scroll">
+    <div class="ctr">
+      <div class="trophy" id="en-ico">🏆</div>
+      <div class="bigres" id="en-title">—</div>
+      <p class="sub mt" id="en-note"></p>
+    </div>
+    <div class="wordbox mt">
+      <div class="up gold" data-t="end.wordwas">Secret word tha</div>
+      <div class="word mt1" id="en-word">—</div>
+      <div class="sm dim mt1" id="en-cat"></div>
+    </div>
+    <div class="card mt"><div class="plist" id="en-roles"></div></div>
+    <div class="card mt">
+      <div class="up gold" data-t="end.score">Scoreboard</div>
+      <div class="plist mt" id="en-score"></div>
+    </div>
+  </div>
+  <div class="fn" id="en-action"></div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="scr" id="s-stats">
+  <div class="top"><button class="iconbtn" data-back="s-home" aria-label="Back">‹</button>
+    <div class="ttl" data-t="st.title">Tumhare Aankde</div></div>
+  <div class="grow scroll" id="st-body"></div>
+</section>
+
+<!-- ============ PACKS ============ -->
+<section class="scr" id="s-packs">
+  <div class="top"><button class="iconbtn" data-back="s-home" aria-label="Back">‹</button>
+    <div class="ttl" data-t="pk.title">Mere Shabd</div></div>
+  <div class="grow scroll" id="pk-body"></div>
+  <div class="grid2 fn mt1">
+    <button class="btn p sm2" id="pk-new" style="width:100%" data-t="pk.new">Naya pack</button>
+    <button class="btn ghost sm2" id="pk-imp" style="width:100%" data-t="pk.import">Import</button>
+  </div>
+</section>
+
+<!-- ============ PACK EDIT ============ -->
+<section class="scr" id="s-packedit">
+  <div class="top"><button class="iconbtn" id="pe-back" aria-label="Back">‹</button>
+    <div class="ttl" id="pe-ttl">—</div>
+    <button class="iconbtn" id="pe-del" style="margin-left:auto" aria-label="Delete">🗑</button></div>
+  <div class="grow scroll">
+    <div class="card">
+      <div class="up gold" data-t="pk.name">Pack ka naam</div>
+      <input class="inp mt1" id="pe-name" maxlength="24" autocomplete="off">
+    </div>
+    <div class="card mt">
+      <div class="row sb"><div class="up gold" data-t="pk.words">Shabd</div><div class="sm dim" id="pe-n">0</div></div>
+      <div class="row mt1 gap6">
+        <input class="inp" id="pe-w" maxlength="28" autocomplete="off">
+        <button class="btn p sm2 fn" id="pe-add" style="padding:13px 16px">+</button>
+      </div>
+      <div class="catbox mt" id="pe-list"></div>
+    </div>
+  </div>
+  <div class="grid2 fn mt1">
+    <button class="btn ghost sm2" id="pe-share" style="width:100%" data-t="pk.share">Share</button>
+    <button class="btn p sm2" id="pe-save" style="width:100%" data-t="ui.save">Save</button>
+  </div>
+</section>
+</div>
+
+<!-- ============ OVERLAYS ============ -->
+<div class="sheet" id="sheet"><div class="box" id="sheet-box"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>

@@ -1,0 +1,65 @@
+/* ============================================================
+   Bot clue bank.  word=clue~हिंदी;clue~हिंदी;…
+   Clues run obvious -> subtle, so difficulty can pick a slot.
+   Only words listed here appear in Solo / Daily mode.
+   ============================================================ */
+const CLUERAW_A = `
+Vada Pav=pav~पाव;fried~तला;Mumbai~मुंबई;chutney~चटनी;cheap~सस्ता;lunch~दोपहर
+Pav Bhaji=butter~मक्खन;mashed~मैश;pav~पाव;tawa~तवा;Mumbai~मुंबई;spicy~चटपटा
+Samosa=triangle~तिकोना;potato~आलू;fried~तला;chai~चाय;shop~दुकान;evening~शाम
+Pani Puri=water~पानी;spicy~तीखा;plate~प्लेट;one bite~एक बाइट;street~सड़क;tangy~खट्टा
+Bhel Puri=beach~बीच;puffed~मुरमुरा;mix~मिक्स;paper cone~ठोंगा;light~हल्का;raw onion~कच्चा प्याज़
+Chole Bhature=heavy~भारी;Delhi~दिल्ली;fried bread~फूली रोटी;pickle~अचार;lunch~दोपहर;lassi~लस्सी
+Masala Dosa=crisp~कुरकुरा;south~दक्षिण;coconut~नारियल;potato~आलू;tawa~तवा;fold~मोड़
+Idli Sambar=steam~भाप;soft~नरम;white~सफ़ेद;south~दक्षिण;breakfast~नाश्ता;light~हल्का
+Momos=steam~भाप;dumpling~पकौड़ी;spicy sauce~तीखी चटनी;hills~पहाड़;Tibet~तिब्बत;plate of ten~दस का प्लेट
+Poha=yellow~पीला;light~हल्का;Indore~इंदौर;breakfast~नाश्ता;sev~सेव;lemon~नींबू
+Litti Chokha=Bihar~बिहार;sattu~सत्तू;fire~आंव;roasted~भुना;ghee~घी;brinjal~बैंगन
+Cutting Chai=half glass~आधा गिलास;tapri~टपरी;quick~झट;milk~दूध;five rupees~पांच रुपये;break~ब्रेक
+Filter Coffee=steel~स्टील;froth~झाग;south~दक्षिण;strong~कड़क;morning~सुबह;decoction~डिकॉक्शन
+Bhutta=corn~मक्का;coal~कोयला;lemon~नींबू;monsoon~बारिश;roadside~सड़क किनारे;masala~मसाला
+Jalebi=spiral~गोल;syrup~चाशनी;hot~गरम;orange~नारंगी;morning~सुबह;rabri~रबड़ी
+Gulab Jamun=round~गोल;syrup~चाशनी;brown~भूरा;wedding~शादी;two pieces~दो पीस;warm~गरम
+Rasgulla=Bengal~बंगाल;white~सफ़ेद;spongy~स्पंजी;sweet water~मीठा पानी;tin~डिब्बा;soft~नरम
+Kulfi=frozen~जमा;matka~मटका;stick~तीली;thick~गाढ़ा;summer~गर्मी;falooda~फ़ालूदा
+Lassi=glass~गिलास;curd~दही;Punjab~पंजाब;thick~गाढ़ा;malai~मलाई;summer~गर्मी
+Kheer=rice~चावल;milk~दूध;slow~धीमा;festival~त्योहार;elaichi~इलायची;bowl~कटोरी
+Masala Chai=morning~सुबह;adrak~अदरक;kettle~केतली;two cups~दो कप;biscuit~बिस्कुट;strain~छानना
+Biryani=layers~तहें;rice~चावल;dum~दम;Hyderabad~हैदराबाद;handi~हांडी;raita~रायता
+Dal Chawal=simple~साधारण;daily~रोज़;home~घर;comfort~आराम;ghee~घी;plate~थाली
+Aloo Paratha=stuffed~भरा;butter~मक्खन;curd~दही;Punjab~पंजाब;breakfast~नाश्ता;tawa~तवा
+Khichdi=sick day~बीमारी;soft~नरम;one pot~एक बर्तन;papad~पापड़;light~हल्का;ghee~घी
+Butter Chicken=gravy~ग्रेवी;creamy~मलाईदार;Delhi~दिल्ली;naan~नान;orange~नारंगी;restaurant~रेस्टोरेंट
+Rajma=kidney~गुर्दा;Sunday~संडे;gravy~ग्रेवी;rice~चावल;soak~भिगोना;Punjabi~पंजाबी
+Paneer Butter Masala=paneer~पनीर;gravy~ग्रेवी;party~पार्टी;naan~नान;creamy~मलाईदार;restaurant~रेस्टोरेंट
+Sarson ka Saag=winter~सर्दी;green~हरा;makki~मक्की;Punjab~पंजाब;butter~मक्खन;fields~खेत
+Achaar=jar~मर्तबान;sour~खट्टा;mango~आम;sun~धूप;side~साथ;oil~तेल
+Papad=crisp~कुरकुरा;round~गोल;roast~भूनना;side~साथ;thali~थाली;snap~कड़क
+Maggi=two minutes~दो मिनट;hostel~हॉस्टल;masala~मसाला;night~रात;packet~पैकेट;noodles~नूडल्स
+Sholay=Gabbar~गब्बर;dosti~दोस्ती;dacoit~डाकू;1975~1975;Jai Veeru~जय वीरू;dialogue~डायलॉग
+DDLJ=train~ट्रेन;Europe~यूरोप;Raj~राज;Maratha Mandir~मराठा मंदिर;romance~रोमांस;sarson~सरसों
+3 Idiots=engineering~इंजीनियरिंग;college~कॉलेज;all is well~ऑल इज़ वेल;friends~दोस्त;Rancho~रैंचो;exam~एग्ज़ाम
+Dangal=wrestling~कुश्ती;father~पिता;Haryana~हरियाणा;daughters~बेटियां;akhada~अखाड़ा;gold~गोल्ड
+Lagaan=cricket~क्रिकेट;village~गांव;British~अंग्रेज़;tax~लगान;match~मैच;Oscar~ऑस्कर
+Gully Boy=rap~रैप;Dharavi~धारावी;apna time~अपना टाइम;Mumbai~मुंबई;music~संगीत;slum~बस्ती
+Munna Bhai MBBS=jaadu ki jhappi~जादू की झप्पी;doctor~डॉक्टर;Circuit~सर्किट;hospital~अस्पताल;comedy~कॉमेडी;degree~डिग्री
+Taare Zameen Par=dyslexia~डिस्लेक्सिया;child~बच्चा;painting~पेंटिंग;school~स्कूल;teacher~शिक्षक;boarding~बोर्डिंग
+Andhadhun=blind~अंधा;piano~पियानो;twist~मोड़;rabbit~ख़रगोश;thriller~थ्रिलर;Pune~पुणे
+Drishyam=alibi~बहाना;police~पुलिस;family~परिवार;cover up~छिपाना;Goa~गोवा;movie hall~सिनेमा
+Baahubali=Mahishmati~माहिष्मती;waterfall~झरना;Katappa~कटप्पा;sword~तलवार;two parts~दो भाग;epic~महाकाव्य
+RRR=two heroes~दो नायक;fire water~आग पानी;Naatu~नाटू;Oscar~ऑस्कर;British~अंग्रेज़;shoulder~कंधा
+KGF=gold mine~सोने की खान;Kolar~कोलार;Rocky~रॉकी;mother~मां;black~काला;Kannada~कन्नड़
+Pushpa=sandalwood~चंदन;smuggling~तस्करी;lorry~लॉरी;Thaggede Le~थग्गेड़े ले;Telugu~तेलुगु;beard~दाढ़ी
+Panchayat=village~गांव;secretary~सचिव;Phulera~फुलेरा;office~दफ़्तर;slow life~सुस्त ज़िंदगी;web series~वेब सीरीज़
+Mirzapur=guns~बंदूक;Purvanchal~पूर्वांचल;carpet~कालीन;bhaiya~भइया;gangster~गैंगस्टर;UP~यूपी
+Scam 1992=share market~शेयर बाज़ार;Harshad~हर्षद;broker~ब्रोकर;1992~1992;bull~बुल;bank~बैंक
+Kota Factory=coaching~कोचिंग;IIT~आईआईटी;black and white~ब्लैक एंड व्हाइट;hostel~हॉस्टल;Jeetu bhaiya~जीतू भइया;Rajasthan~राजस्थान
+Sacred Games=Ganesh~गणेश;Mumbai~मुंबई;police~पुलिस;25 days~25 दिन;dark~अंधेरा;Netflix~नेटफ़्लिक्स
+Ramayan=Sunday morning~संडे सुबह;Doordarshan~दूरदर्शन;Ram~राम;1987~1987;serial~सीरियल;devotion~भक्ति
+Shaktimaan=superhero~सुपरहीरो;spin~घूमना;Gangadhar~गंगाधर;Sunday~संडे;Tamraj~तमराज;kids~बच्चे
+Taarak Mehta=Gokuldham~गोकुलधाम;Jethalal~जेठालाल;comedy~कॉमेडी;society~सोसाइटी;daily~रोज़;long running~लंबा
+Kaun Banega Crorepati=hotseat~हॉटसीट;lifeline~लाइफ़लाइन;Amitabh~अमिताभ;quiz~क्विज़;lock kiya~लॉक किया;crore~करोड़
+Bigg Boss=house~घर;camera~कैमरा;eviction~बेदख़ली;fight~झगड़ा;captain~कप्तान;weekend~वीकेंड
+CID=ACP~एसीपी;Daya~दया;door~दरवाज़ा;case~केस;investigation~जांच;forensic~फ़ॉरेंसिक
+Chota Bheem=laddu~लड्डू;Dholakpur~ढोलकपुर;strength~ताक़त;cartoon~कार्टून;kids~बच्चे;friends~दोस्त
+`;
