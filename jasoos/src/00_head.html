@@ -40,6 +40,12 @@
 "inLanguage":["hi","en"],"isAccessibleForFree":true,
 "offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}}
 </script>
+<script src="/peerjs.min.js"></script>
+<script>
+if (typeof Peer === 'undefined') {
+  document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"><\/script>');
+}
+</script>
 <style>
 /* Display face: latin subset only (33KB). Devanagari intentionally uses the
    device's own Hindi font — instant, zero bytes, and what Indian users read daily. */

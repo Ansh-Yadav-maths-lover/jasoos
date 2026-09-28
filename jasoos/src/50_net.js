@@ -145,6 +145,253 @@ function handleAct(from, d) {
   if (d.a === 'next') { if (S.phase === 'eject') afterEject(); return; }
   if (d.a === 'again') { if (S.phase === 'end') newGame(true); return; }
 }
+const PEER_CONFIG = {
+  host: '0.peerjs.com',
+  port: 443,
+  path: '/',
+  secure: true,
+  config: {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:openrelay.metered.ca:80' },
+      { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+      { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
+      { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' },
+    ]
+  }
+};
+
+function shouldUseP2P() {
+  const p = (typeof location !== 'undefined' && location.search) ? new URLSearchParams(location.search) : null;
+  if (p && p.get('p2p') === '1') return true;
+  if (p && p.get('ws') === '1') return false;
+  if (typeof localStorage !== 'undefined' && localStorage.getItem('jas.p2p') === '1') return true;
+  if (typeof localStorage !== 'undefined' && localStorage.getItem('jas.p2p') === '0') return false;
+  if (typeof window !== 'undefined' && (window.JASOOS_WS_URL || localStorage.getItem('jas.ws_url'))) return false;
+  if (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+    return false;
+  }
+  return true;
+}
+
+function ensurePeerJS() {
+  if (typeof Peer !== 'undefined') return Promise.resolve(Peer);
+  return new Promise((resolve, reject) => {
+    let count = 0;
+    const check = setInterval(() => {
+      if (typeof Peer !== 'undefined') { clearInterval(check); resolve(Peer); }
+      else if (++count > 40) { clearInterval(check); reject(new Error('PeerJS not loaded')); }
+    }, 100);
+  });
+}
+
+function generatePeerId() {
+  return Math.random().toString(36).slice(2, 10);
+}
+
+function createPeerRelaySocket(code, asHost) {
+  code = (code || '').toUpperCase();
+  const hostRoomId = 'jasoos-v1-' + code.toLowerCase();
+  let peer = null;
+  let conn = null;
+  const clients = new Map();
+  const roomState = {};
+
+  const sock = {
+    readyState: 0,
+    _onopen: null,
+    _onmessage: null,
+    _onclose: null,
+    _onerror: null,
+    _queue: [],
+    set onopen(fn) { this._onopen = fn; if (fn && this.readyState === 1) fn(); },
+    get onopen() { return this._onopen; },
+    set onmessage(fn) {
+      this._onmessage = fn;
+      if (fn && this._queue.length) {
+        this._queue.splice(0).forEach(ev => fn(ev));
+      }
+    },
+    get onmessage() { return this._onmessage; },
+    set onclose(fn) { this._onclose = fn; if (fn && this.readyState === 3) fn(); },
+    get onclose() { return this._onclose; },
+    set onerror(fn) { this._onerror = fn; },
+    get onerror() { return this._onerror; },
+    emit(data) {
+      const ev = { data: typeof data === 'string' ? data : JSON.stringify(data) };
+      if (this._onmessage) this._onmessage(ev);
+      else this._queue.push(ev);
+    },
+    send(raw) {
+      if (sock.readyState !== 1) return false;
+      let msg;
+      try { msg = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch(e) { return false; }
+      if (!msg) return false;
+
+      if (asHost) {
+        if (msg.type === 'msg') {
+          const payload = JSON.stringify({ type: 'msg', from: 'host', data: msg.data });
+          if (msg.to) {
+            const target = clients.get(msg.to);
+            if (target && target.open) target.send(payload);
+          } else {
+            clients.forEach(c => { if (c.open) c.send(payload); });
+          }
+        } else if (msg.type === 'set') {
+          if (msg.key != null) roomState[msg.key] = msg.value;
+        }
+        return true;
+      } else {
+        if (conn && conn.open) {
+          conn.send(typeof raw === 'string' ? raw : JSON.stringify(raw));
+          return true;
+        }
+        return false;
+      }
+    },
+    close() {
+      if (sock.readyState === 3) return;
+      sock.readyState = 3;
+      if (asHost) {
+        clients.forEach(c => { try { c.close(); } catch(e){} });
+        clients.clear();
+      } else {
+        try { conn && conn.close(); } catch(e){}
+      }
+      try { peer && peer.destroy(); } catch(e){}
+      if (sock._onclose) sock._onclose();
+    }
+  };
+
+  if (asHost) {
+    try {
+      peer = new Peer(hostRoomId, PEER_CONFIG);
+    } catch(err) {
+      setTimeout(() => { if (sock._onerror) sock._onerror(err); }, 10);
+      return sock;
+    }
+
+    peer.on('open', () => {
+      sock.readyState = 1;
+      if (sock._onopen) sock._onopen();
+      sock.emit({
+        type: 'welcome',
+        id: 'host',
+        peers: Array.from(clients.keys()),
+        state: roomState
+      });
+    });
+
+    peer.on('connection', (clientConn) => {
+      let clientPeerId = null;
+      clientConn.on('open', () => {
+        clientPeerId = (clientConn.metadata && clientConn.metadata.peerId) || generatePeerId();
+        const existingPeers = Array.from(clients.keys());
+        clients.set(clientPeerId, clientConn);
+
+        clientConn.send(JSON.stringify({
+          type: 'welcome',
+          id: clientPeerId,
+          peers: existingPeers,
+          state: roomState
+        }));
+
+        clients.forEach((c, id) => {
+          if (id !== clientPeerId && c.open) {
+            c.send(JSON.stringify({ type: 'join', id: clientPeerId }));
+          }
+        });
+
+        sock.emit({ type: 'join', id: clientPeerId });
+      });
+
+      clientConn.on('data', (raw) => {
+        let msg;
+        try { msg = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch(e) { return; }
+        if (!msg) return;
+
+        if (msg.type === 'msg') {
+          const payload = JSON.stringify({ type: 'msg', from: clientPeerId, data: msg.data });
+          if (msg.to) {
+            if (msg.to === 'host') {
+              sock.emit(payload);
+            } else {
+              const target = clients.get(msg.to);
+              if (target && target.open) target.send(payload);
+            }
+          } else {
+            sock.emit(payload);
+            clients.forEach((c, id) => {
+              if (id !== clientPeerId && c.open) c.send(payload);
+            });
+          }
+        } else if (msg.type === 'set') {
+          if (msg.key != null) roomState[msg.key] = msg.value;
+        }
+      });
+
+      clientConn.on('close', () => {
+        if (!clientPeerId) return;
+        clients.delete(clientPeerId);
+        const leaveMsg = JSON.stringify({ type: 'leave', id: clientPeerId });
+        clients.forEach(c => { if (c.open) c.send(leaveMsg); });
+        sock.emit(leaveMsg);
+      });
+
+      clientConn.on('error', () => {
+        try { clientConn.close(); } catch(e){}
+      });
+    });
+
+    peer.on('error', (err) => {
+      sock.readyState = 3;
+      if (sock._onerror) sock._onerror(err);
+    });
+
+  } else {
+    const myTempId = generatePeerId();
+    try {
+      peer = new Peer(PEER_CONFIG);
+    } catch(err) {
+      setTimeout(() => { if (sock._onerror) sock._onerror(err); }, 10);
+      return sock;
+    }
+
+    peer.on('open', () => {
+      conn = peer.connect(hostRoomId, {
+        reliable: true,
+        metadata: { peerId: myTempId, uid: ME.uid }
+      });
+
+      conn.on('open', () => {
+        sock.readyState = 1;
+        if (sock._onopen) sock._onopen();
+      });
+
+      conn.on('data', (raw) => {
+        sock.emit(raw);
+      });
+
+      conn.on('close', () => {
+        sock.readyState = 3;
+        if (sock._onclose) sock._onclose();
+      });
+
+      conn.on('error', (err) => {
+        if (sock._onerror) sock._onerror(err);
+      });
+    });
+
+    peer.on('error', (err) => {
+      sock.readyState = 3;
+      if (sock._onerror) sock._onerror(err);
+    });
+  }
+
+  return sock;
+}
+
 function getWsEndpoint(code) {
   const custom = (typeof window !== 'undefined' && (window.JASOOS_WS_URL || localStorage.getItem('jas.ws_url'))) || '';
   if (custom) {
@@ -154,13 +401,20 @@ function getWsEndpoint(code) {
   const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
   return `${proto}//${location.host}/ws/jasoos-${code}`;
 }
-function connect(code) {
+
+async function connect(code, asHost) {
+  S.mode = 'online'; NET.room = code; NET.bye = false; ME.uid = ME.id = uid;
+  let ws;
+  if (shouldUseP2P()) {
+    await ensurePeerJS();
+    ws = createPeerRelaySocket(code, asHost);
+  } else {
+    try { ws = new WebSocket(getWsEndpoint(code)); } catch (e) { throw e; }
+  }
+  NET.ws = ws;
+
   return new Promise((res, rej) => {
-    S.mode = 'online'; NET.room = code; NET.bye = false; ME.uid = ME.id = uid;
-    let ws;
-    try { ws = new WebSocket(getWsEndpoint(code)); } catch (e) { return rej(e); }
-    NET.ws = ws;
-    const to = setTimeout(() => { try { ws.close(); } catch (e) {} rej(new Error('timeout')); }, 9000);
+    const to = setTimeout(() => { try { ws.close(); } catch (e) {} rej(new Error('timeout')); }, 12000);
     ws.onmessage = ev => {
       let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
       if (m.type === 'welcome') {
@@ -168,15 +422,23 @@ function connect(code) {
         NET.id = m.id; NET.peers = (m.peers || []).slice(); NET.open = true; NET.tries = 0;
         NET.keepalive();
         const meta = (m.state || {}).meta || {};
-        if (meta.hostUid === ME.uid) { NET.host = true; S.host = ME.uid; S.hostPeer = NET.id; pushState(); }
-        else if (meta.hostUid && meta.hostPeer && NET.peers.includes(meta.hostPeer)) {
+        if (asHost || meta.hostUid === ME.uid) {
+          becomeHost(false);
+        } else if (meta.hostUid && meta.hostPeer) {
           NET.host = false; S.host = meta.hostUid; S.hostPeer = meta.hostPeer;
           if (meta.set) SET = Object.assign({}, DEF, meta.set);
           NET.joinT = Date.now();
           NET.toPeer(meta.hostPeer, { a: 'join', uid: ME.uid, name: ME.name, av: ME.av });
           clearTimeout(NET.waitT);
           NET.waitT = setTimeout(() => { if (!NET.host && !S.players.some(p => p.id === ME.uid)) becomeHost(true); }, 5000);
-        } else becomeHost(!!meta.hostUid);
+        } else {
+          NET.host = false;
+          S.hostPeer = 'host';
+          NET.joinT = Date.now();
+          NET.toPeer('host', { a: 'join', uid: ME.uid, name: ME.name, av: ME.av });
+          clearTimeout(NET.waitT);
+          NET.waitT = setTimeout(() => { if (!NET.host && !S.players.some(p => p.id === ME.uid)) becomeHost(true); }, 5000);
+        }
         res();
       } else if (m.type === 'join') {
         if (!NET.peers.includes(m.id)) NET.peers.push(m.id);
@@ -221,16 +483,25 @@ function connect(code) {
       }
     };
     ws.onclose = () => { NET.open = false; clearInterval(NET.ka); if (!NET.bye && S.mode === 'online') reconnectSoon(); };
-    ws.onerror = () => { clearTimeout(to); if (!NET.open) rej(new Error('ws')); };
+    ws.onerror = (err) => {
+      clearTimeout(to);
+      if (!NET.open) {
+        const msg = (err && (err.type || err.message)) || 'ws';
+        rej(new Error(msg));
+      }
+    };
   });
 }
+
 function reconnectSoon() {
   if (NET.bye || !NET.room) return;
   NET.tries = (NET.tries || 0) + 1;
   if (NET.tries > 8) { toast(t('room.nolink'), 5000); return; }
   clearTimeout(NET.rcT);
-  NET.rcT = setTimeout(() => { connect(NET.room).catch(() => reconnectSoon()); }, Math.min(3000, 300 * NET.tries));
+  const isHost = NET.host || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('jas.host_' + NET.room) === '1');
+  NET.rcT = setTimeout(() => { connect(NET.room, isHost).catch(() => reconnectSoon()); }, Math.min(3000, 300 * NET.tries));
 }
+
 function becomeHost(wasSomeoneElse) {
   NET.host = true; S.host = ME.uid; S.hostPeer = NET.id;
   if (!S.players.some(p => p.id === ME.uid))
@@ -242,6 +513,7 @@ function becomeHost(wasSomeoneElse) {
     pushState(); go('s-room');
   } else { S.phase = 'lobby'; pushState(); }
 }
+
 /* ============ name gate ============ */
 function askName(next) {
   const me = jget('jas.me', {});
@@ -264,23 +536,48 @@ function askName(next) {
   $('#n-name').onkeydown = e => { if (e.key === 'Enter') done(); };
   setTimeout(() => $('#n-name').focus(), 120);
 }
-function createRoom() {
+
+function createRoom(tries) {
+  tries = tries || 0;
   askName(async () => {
     const code = Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join('');
     toast(t('room.making'), 1200);
-    try { await connect(code); location.hash = 'r=' + code; go('s-room'); sfx.ok(); }
-    catch (e) { toast(t('room.makefail'), 3000); S.mode = 'local'; }
+    try {
+      if (typeof sessionStorage !== 'undefined') sessionStorage.setItem('jas.host_' + code, '1');
+      await connect(code, true);
+      location.hash = 'r=' + code;
+      go('s-room');
+      sfx.ok();
+    } catch (e) {
+      if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('jas.host_' + code);
+      if (e && (e.message === 'unavailable-id' || e.message === 'id-taken') && tries < 3) {
+        return createRoom(tries + 1);
+      }
+      toast(t('room.makefail'), 3200);
+      S.mode = 'local';
+    }
   });
 }
+
 function joinRoom(code) {
   code = (code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
   if (code.length !== 4) return toast(t('room.code4'));
   askName(async () => {
     toast(t('room.joining'), 1200);
-    try { await connect(code); location.hash = 'r=' + code; go('s-room'); sfx.ok(); }
-    catch (e) { toast(t('room.joinfail'), 3000); S.mode = 'local'; }
+    try {
+      const isHost = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('jas.host_' + code) === '1';
+      await connect(code, isHost);
+      location.hash = 'r=' + code;
+      go('s-room');
+      sfx.ok();
+    } catch (e) {
+      const isNotFound = e && (e.message === 'peer-unavailable' || e.message === 'not-found');
+      toast(isNotFound ? (LANG === 'hi' ? 'Room nahi mila. Code check karo!' : 'Room not found. Check code!') : t('room.joinfail'), 3200);
+      S.mode = 'local';
+    }
   });
 }
+
 function joinSheet(pref) {
   sheet(`<div class="row sb"><h2>${t('room.askcode')}</h2><button class="iconbtn" id="sh-x">✕</button></div><div class="hr"></div>
     <input class="inp big" id="j-code" maxlength="4" placeholder="ABCD" value="${esc(pref || '')}" autocomplete="off" autocapitalize="characters" inputmode="text">
@@ -293,3 +590,38 @@ function joinSheet(pref) {
   $('#j-ok').onclick = go2;
   inp.onkeydown = e => { if (e.key === 'Enter') go2(); };
 }
+
+function setRelayServer(url) {
+  url = (url || '').trim();
+  if (!url) {
+    localStorage.removeItem('jas.ws_url');
+    toast(LANG === 'hi' ? 'Serverless (P2P Cloud) set hua' : 'Reset to Serverless (P2P Cloud)');
+  } else {
+    if (!/^wss?:\/\//i.test(url)) url = 'wss://' + url;
+    localStorage.setItem('jas.ws_url', url);
+    toast(LANG === 'hi' ? 'Custom server set hua' : 'Custom server saved');
+  }
+}
+
+function relaySettingsSheet() {
+  const cur = (typeof localStorage !== 'undefined' && localStorage.getItem('jas.ws_url')) || '';
+  const isP2P = shouldUseP2P();
+  sheet(`<div class="row sb"><h2>${LANG === 'hi' ? 'Online Server' : 'Online Relay'}</h2><button class="iconbtn" id="sh-x">✕</button></div>
+    <div class="hr"></div>
+    <div class="card tight">
+      <div class="row sb"><span class="up gold">${LANG === 'hi' ? 'Status' : 'Engine'}</span>
+      <span class="pill y">${isP2P ? '⚡ P2P Cloud (Vercel)' : '🔌 WebSocket'}</span></div>
+      <div class="xs dim mt">${isP2P ? (LANG === 'hi' ? 'Vercel / Cloud serverless mode active. Kisi server ki zaroorat nahi.' : 'Zero-config serverless P2P active. No server setup required.') : (LANG === 'hi' ? 'Local / Custom WebSocket server active.' : 'Direct WebSocket connection active.')}</div>
+    </div>
+    <div class="mt"><div class="sm dim">${LANG === 'hi' ? 'Custom WebSocket Server URL (Optional)' : 'Custom WebSocket Server (Optional)'}</div>
+    <input class="inp mt1" id="ws-inp" placeholder="wss://your-relay.onrender.com" value="${esc(cur)}"></div>
+    <div class="xs dim mt">${LANG === 'hi' ? 'Khali chhodne par auto P2P cloud use hoga (Vercel ke liye best).' : 'Leave empty to auto-use serverless P2P cloud (recommended for Vercel).'}</div>
+    <div class="row gap6 mt2">
+      <button class="btn ghost sm2 f1" id="ws-reset">${LANG === 'hi' ? 'Reset (Default)' : 'Reset Default'}</button>
+      <button class="btn p sm2 f1" id="ws-save">${LANG === 'hi' ? 'Save' : 'Save'}</button>
+    </div>`);
+  $('#sh-x').onclick = closeSheet;
+  $('#ws-reset').onclick = () => { setRelayServer(''); closeSheet(); };
+  $('#ws-save').onclick = () => { const v = $('#ws-inp').value; setRelayServer(v); closeSheet(); };
+}
+

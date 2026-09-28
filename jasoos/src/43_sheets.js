@@ -22,12 +22,14 @@ function menuSheet() {
       <button class="btn ghost" id="m-rules">📖 ${t('ui.rules')}</button>
       <button class="btn ghost" id="m-snd">${SND ? '🔊 ' + t('ui.sound') + ': ' + t('ui.on') : '🔇 ' + t('ui.sound') + ': ' + t('ui.off')}</button>
       <button class="btn ghost" id="m-lang">🌐 ${t('ui.lang')}</button>
+      <button class="btn ghost" id="m-relay">⚡ ${LANG === 'hi' ? 'Online Server' : 'Online Relay'}</button>
       <button class="btn ghost" id="m-quit">🚪 ${t('ui.quit')}</button>
     </div>`);
   $('#sh-x').onclick = closeSheet;
   $('#m-rules').onclick = rulesSheet;
   $('#m-snd').onclick = () => { toggleSnd(); closeSheet(); };
   $('#m-lang').onclick = () => { closeSheet(); go('s-lang'); };
+  $('#m-relay').onclick = () => { closeSheet(); relaySettingsSheet(); };
   $('#m-quit').onclick = () => { closeSheet(); leaveGame(); };
 }
 function myCardSheet() {

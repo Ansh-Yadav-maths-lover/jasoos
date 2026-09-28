@@ -68,9 +68,9 @@ JASOOS is optimized for 1-click deployment on **[Vercel](https://vercel.com)**.
 - **Output Directory**: Leave blank or set to `./`
 - Click **Deploy**!
 
-> **Note on Online Rooms & WebSockets**:  
-> Vercel hosts the frontend as a serverless static Progressive Web App (PWA). **Pass & Play** and **Solo vs Bots** work 100% offline out-of-the-box on Vercel.  
-> If you want cross-device **Online Multiplayer Rooms** in production, host `server.js` on a persistent Node.js service (such as Render, Railway, Fly.io, or VPS) and point the client to your WebSocket relay URL (via `localStorage.setItem('jas.ws_url', 'wss://your-relay.onrender.com')` or `window.JASOOS_WS_URL`).
+> **Online Multiplayer Rooms on Vercel**:  
+> Online Rooms work **100% out-of-the-box on Vercel with zero configuration required**! The game automatically switches to serverless WebRTC P2P signaling (powered by PeerJS Cloud and STUN/TURN relays) when hosted on Vercel or any static platform.  
+> You can also connect to a dedicated custom WebSocket server (like Render, Railway, or VPS) anytime via the in-game Settings menu (`⚡ Online Server`) or `window.JASOOS_WS_URL`.
 
 ---
 

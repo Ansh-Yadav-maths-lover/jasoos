@@ -1,6 +1,6 @@
 /* JASOOS service worker — offline-first shell */
-const V = 'jasoos-v2';
-const SHELL = ['/', '/index.html', '/baloo.woff2', '/manifest.webmanifest', '/icon-192.png'];
+const V = 'jasoos-v3';
+const SHELL = ['/', '/index.html', '/baloo.woff2', '/manifest.webmanifest', '/icon-192.png', '/peerjs.min.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(SHELL).catch(() => {})).then(() => self.skipWaiting()));
