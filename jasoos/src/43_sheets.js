@@ -23,6 +23,7 @@ function menuSheet() {
       <button class="btn ghost" id="m-snd">${SND ? '🔊 ' + t('ui.sound') + ': ' + t('ui.on') : '🔇 ' + t('ui.sound') + ': ' + t('ui.off')}</button>
       <button class="btn ghost" id="m-lang">🌐 ${t('ui.lang')}</button>
       <button class="btn ghost" id="m-relay">⚡ ${LANG === 'hi' ? 'Online Server' : 'Online Relay'}</button>
+      <button class="btn ghost" id="m-credit">👨‍💻 ${LANG === 'hi' ? 'Made by Ansh' : 'Made by Ansh'}</button>
       <button class="btn ghost" id="m-quit">🚪 ${t('ui.quit')}</button>
     </div>`);
   $('#sh-x').onclick = closeSheet;
@@ -30,7 +31,43 @@ function menuSheet() {
   $('#m-snd').onclick = () => { toggleSnd(); closeSheet(); };
   $('#m-lang').onclick = () => { closeSheet(); go('s-lang'); };
   $('#m-relay').onclick = () => { closeSheet(); relaySettingsSheet(); };
+  $('#m-credit').onclick = () => { closeSheet(); creditSheet(); };
   $('#m-quit').onclick = () => { closeSheet(); leaveGame(); };
+}
+function creditSheet() {
+  sheet(`<div class="row sb"><h2>${LANG === 'hi' ? 'About & Credits' : 'About & Credits'}</h2><button class="iconbtn" id="sh-x">✕</button></div>
+    <div class="hr"></div>
+    <div class="center" style="padding:6px 4px 14px">
+      <svg class="eye glow" viewBox="0 0 100 100" fill="none" style="width:60px;height:60px" aria-hidden="true">
+        <circle cx="42" cy="42" r="26" stroke="#f5b83d" stroke-width="7"/>
+        <path d="M60 60l26 26" stroke="#f5b83d" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="42" cy="42" r="11" fill="#e0457b"/>
+        <circle cx="37" cy="37" r="3.6" fill="#fff" opacity=".85"/>
+      </svg>
+      <div class="dsp gold mt1" style="font-size:26px">JASOOS</div>
+      <div class="up xs dim" style="letter-spacing:.2em">The Desi Imposter Game · जासूस</div>
+      <div class="card tight mt2" style="width:100%;text-align:left;border-color:rgba(245,184,61,.3);background:linear-gradient(140deg,rgba(255,255,255,.05),rgba(245,184,61,.05))">
+        <div class="row" style="gap:12px">
+          <div class="av lg" style="background:linear-gradient(135deg,rgba(245,184,61,.24),rgba(224,69,123,.2));border-color:var(--gold);font-size:30px">👨‍💻</div>
+          <div class="f1">
+            <div class="up xs gold" style="letter-spacing:.12em">${LANG === 'hi' ? 'Designed & Developed by' : 'Designed & Developed by'}</div>
+            <div style="font-size:20px;font-weight:800;font-family:'Baloo 2';color:#fff">Ansh Yadav</div>
+            <div class="xs dim" style="margin-top:2px">Creator & Developer · India's Desi Imposter Party Game</div>
+          </div>
+        </div>
+      </div>
+      <div class="col mt1" style="gap:8px;width:100%">
+        <a href="https://github.com/Ansh-Yadav-maths-lover" target="_blank" rel="noopener" class="btn ghost sm2" style="text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px">
+          <span style="font-size:18px">🐙</span>
+          <span style="font-weight:700">GitHub: @Ansh-Yadav-maths-lover</span>
+          <span class="xs dim">↗</span>
+        </a>
+        <a href="https://github.com/Ansh-Yadav-maths-lover/jasoos" target="_blank" rel="noopener" class="btn p sm2" style="text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px">
+          <span>⭐ Star on GitHub</span>
+        </a>
+      </div>
+    </div>`);
+  $('#sh-x').onclick = closeSheet;
 }
 function myCardSheet() {
   if (onePhone()) return toast(t('clue.onephone'), 2600);

@@ -57,6 +57,7 @@ $('#h-snd').onclick = () => toggleSnd();
 $('#h-how').onclick = () => { sfx.tap(); rulesSheet(); };
 $('#h-packs').onclick = () => { sfx.tap(); go('s-packs'); };
 $('#h-share').onclick = shareInvite;
+const bCred = $('#b-credit'); if (bCred) bCred.onclick = () => { sfx.tap(); creditSheet(); };
 $('#ob-next').onclick = () => { sfx.tap(); if (OBI >= OBART.length - 1) obDone(); else { OBI++; renderOb(); } };
 $('#ob-skip').onclick = () => { sfx.tap(); obDone(); };
 $('#b-add').onclick = () => addPlayer($('#pname').value);

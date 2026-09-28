@@ -109,6 +109,33 @@
 .tick{animation:tk .35s cubic-bezier(.3,1.6,.4,1)}
 @keyframes tk{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
 
+/* ---------- developer credit ---------- */
+.dev-foot{display:flex;justify-content:center;margin-top:8px;padding-bottom:2px}
+.dev-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 14px;border-radius:99px;
+  background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(245,184,61,.06));
+  border:1px solid rgba(245,184,61,.22);
+  color:var(--dim);font-size:12px;font-weight:500;
+  transition:all .2s ease;cursor:pointer;
+  box-shadow:0 2px 8px -2px rgba(0,0,0,.4);
+}
+.dev-badge:hover, .dev-badge:active{
+  border-color:rgba(245,184,61,.5);color:var(--txt);
+  background:linear-gradient(135deg,rgba(245,184,61,.12),rgba(224,69,123,.1));
+  box-shadow:0 4px 16px -4px rgba(245,184,61,.3);
+  transform:translateY(-1px);
+}
+.dev-badge .dev-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 6px var(--green);flex:none;
+}
+.dev-badge .dev-heart{display:inline-block;animation:heartbeat 1.8s ease-in-out infinite;margin:0 1px}
+@keyframes heartbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.22)}28%{transform:scale(1)}}
+.dev-badge .dev-name{color:var(--gold);font-weight:700;letter-spacing:.02em}
+.dev-badge .dev-arrow{font-size:11px;opacity:.65;transition:transform .18s;margin-left:1px}
+.dev-badge:hover .dev-arrow{transform:translate(2px,-2px);opacity:1;color:var(--gold)}
+
 /* ---------- responsive ---------- */
 @media (max-height:700px){
   .logo{font-size:clamp(36px,11.5vw,50px)}
