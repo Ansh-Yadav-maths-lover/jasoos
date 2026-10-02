@@ -66,7 +66,8 @@ $('#cat-all').onclick = () => { SET.cats = CATIDS.slice(); saveSet(); sfx.tap();
 $('#cat-none').onclick = () => { SET.cats = [CATIDS[0]]; saveSet(); sfx.tap(); render(); };
 $('#b-startlocal').onclick = () => {
   if (LOCAL.length < 3) return toast(t('set.need3'));
-  S.mode = 'local'; S.bots = {}; clearBots();
+  ensureUniqueRosterIds();
+  S.mode = 'local'; S.bots = {}; clearBots(); S.queue = [];
   S.players = LOCAL.map(p => ({ id: p.id, name: p.name, av: p.av, score: 0, alive: true, voted: false }));
   actx(); sfx.ok(); newGame(false);
 };

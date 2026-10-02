@@ -166,6 +166,13 @@ function newGame(keepScores, opts) {
   const src = soloish() ? pickSoloWord(rng) : pickWord(rng);
   S.catId = src.cat.id; S.catObj = src.cat; S.wordObj = src.word; S.decoyObj = src.decoy;
   S.players.forEach(p => { p.alive = true; p.voted = false; if (!keepScores) p.score = 0; });
+  const seenPids = new Set();
+  S.players.forEach((p, idx) => {
+    if (!p.id || seenPids.has(p.id)) {
+      p.id = (p.id || 'p') + '_' + Date.now().toString(36) + '_' + idx + '_' + Math.random().toString(36).slice(2, 6);
+    }
+    seenPids.add(p.id);
+  });
   let ids = shuffle(S.players.map(p => p.id), rng);
   if (opts.forceSpy) { ids = [opts.forceSpy].concat(ids.filter(i => i !== opts.forceSpy)); }
   ROLES = {};

@@ -9,9 +9,22 @@ function paintStatic() {
 const QNAMES = [['Rahul','राहुल'],['Priya','प्रिया'],['Arjun','अर्जुन'],['Neha','नेहा'],['Vicky','विक्की'],
   ['Meera','मीरा'],['Aisha','आयशा'],['Karan','करण'],['Simran','सिमरन'],['Rohit','रोहित']];
 const qName = i => LANG === 'hi' ? QNAMES[i][1] : QNAMES[i][0];
+const makePlayerId = () => 'p_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
 let LOCAL = jget('jas.roster', null) || [0, 1, 2, 3].map(i => ({ id: 'p' + i, name: qName(i), av: AVS[i] }));
 const saveRoster = () => jset('jas.roster', LOCAL);
-let nextPid = LOCAL.length + 1;
+function ensureUniqueRosterIds() {
+  const seen = new Set();
+  let changed = false;
+  LOCAL.forEach((p, idx) => {
+    if (!p.id || seen.has(p.id)) {
+      p.id = 'p_' + Date.now().toString(36) + '_' + idx + '_' + Math.random().toString(36).slice(2, 7);
+      changed = true;
+    }
+    seen.add(p.id);
+  });
+  if (changed) saveRoster();
+}
+ensureUniqueRosterIds();
 /* ============ settings ui ============ */
 function seg(key, opts) {
   return '<div class="seg">' + opts.map(o =>
@@ -119,6 +132,7 @@ function renderHome() {
 }
 /* ============ local setup ============ */
 function renderSetup() {
+  ensureUniqueRosterIds();
   $('#pcount').textContent = LOCAL.length + ' / 12';
   $('#setup-players').innerHTML = LOCAL.map((p, i) => `
     <div class="prow"><button class="av" data-av="${i}" aria-label="avatar">${p.av}</button>
@@ -146,7 +160,10 @@ function addPlayer(name) {
   if (!name) return toast(t('set.typename'));
   if (LOCAL.length >= 12) return toast(t('set.max'));
   if (LOCAL.some(p => p.name.toLowerCase() === name.toLowerCase())) return toast(t('set.dupe'));
-  LOCAL.push({ id: 'p' + (nextPid++), name, av: AVS[LOCAL.length % AVS.length] });
+  ensureUniqueRosterIds();
+  const usedAvs = LOCAL.map(p => p.av);
+  const nextAv = AVS.find(a => !usedAvs.includes(a)) || AVS[LOCAL.length % AVS.length];
+  LOCAL.push({ id: makePlayerId(), name, av: nextAv });
   saveRoster(); sfx.ok(); $('#pname').value = ''; render();
 }
 /* ============ solo setup ============ */
